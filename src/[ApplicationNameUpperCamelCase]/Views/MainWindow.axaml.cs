@@ -1,15 +1,19 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-
+using ApplicationNameUpperCamelCase.ViewModels;
 using Avalonia.Controls;
 using Avalonia.Threading;
 
 using Nullinside.Api.Common.Desktop;
 
-using SiteMonitor.ViewModels;
-
-namespace SiteMonitor.Views;
+#if !DEBUG
+using Microsoft.Extensions.DependencyInjection;
+#else
+using Avalonia;
+#endif
+namespace ApplicationNameUpperCamelCase.Views;
 
 /// <summary>
 ///   The main application window.
@@ -20,6 +24,9 @@ public partial class MainWindow : Window {
   /// </summary>
   public MainWindow() {
     InitializeComponent();
+#if DEBUG
+    this.AttachDevTools();
+#endif
   }
 
   /// <summary>
@@ -28,9 +35,19 @@ public partial class MainWindow : Window {
   protected override void OnInitialized() {
     base.OnInitialized();
 
+    var args = Environment.GetCommandLineArgs().ToList();
+    if (args.Contains("--update")) {
+      _ = GitHubUpdateManager.PerformUpdateAndRestart("nullinside-development-group", "ApplicationNameUpperCamelCase", args[2], "windows-x64.zip");
+      return;
+    }
+
+    if (args.Contains("--justUpdated")) {
+      _ = GitHubUpdateManager.CleanupUpdate();
+    }
+
     Task.Factory.StartNew(async () => {
       GithubLatestReleaseJson? serverVersion =
-        await GitHubUpdateManager.GetLatestVersion("nullinside-development-group", "nullinside-site-monitor");
+        await GitHubUpdateManager.GetLatestVersion("nullinside-development-group", "ApplicationNameUpperCamelCase");
       string? localVersion = Assembly.GetEntryAssembly()?.GetName().Version?.ToString();
       if (null == serverVersion || string.IsNullOrWhiteSpace(serverVersion.name) ||
           string.IsNullOrWhiteSpace(localVersion)) {
@@ -43,18 +60,33 @@ public partial class MainWindow : Window {
       }
 
       if (serverVersion.name?.Equals(localVersion, StringComparison.InvariantCultureIgnoreCase) ?? true) {
+// Had to add this because code clean up tools were removing the "redundant" return statement.
+// which was causing the check to always be ignored.
+#if !DEBUG
+        return;
+#endif
+      }
+
+#if !DEBUG
+      var vm = ServiceProvider?.GetRequiredService<NewVersionWindowViewModel>();
+      if (null == vm) {
         return;
       }
 
-      Dispatcher.UIThread.Post(async () => {
-        var versionWindow = new NewVersionWindow {
-          DataContext = new NewVersionWindowViewModel {
-            LocalVersion = localVersion
-          }
-        };
+      vm.LocalVersion = localVersion;
+      Dispatcher.UIThread.Post(async void () => {
+        try {
+          var versionWindow = new NewVersionWindow {
+            DataContext = vm
+          };
 
-        await versionWindow.ShowDialog(this);
+          await versionWindow.ShowDialog(this);
+        }
+        catch {
+          // do nothing, don't crash
+        }
       });
+#endif
     });
   }
 }

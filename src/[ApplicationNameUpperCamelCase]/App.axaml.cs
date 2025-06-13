@@ -1,14 +1,12 @@
 using System;
-
+using ApplicationNameUpperCamelCase.ViewModels;
+using ApplicationNameUpperCamelCase.Views;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 
-using SiteMonitor.ViewModels;
-using SiteMonitor.Views;
-
-namespace SiteMonitor;
+namespace ApplicationNameUpperCamelCase;
 
 /// <summary>
 ///   Main entry point of the application.

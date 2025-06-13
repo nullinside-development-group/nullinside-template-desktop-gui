@@ -3,7 +3,7 @@ using System.Reflection;
 
 using Newtonsoft.Json;
 
-namespace SiteMonitor.Models;
+namespace ApplicationNameUpperCamelCase.Models;
 
 /// <summary>
 ///   The configuration of the application.

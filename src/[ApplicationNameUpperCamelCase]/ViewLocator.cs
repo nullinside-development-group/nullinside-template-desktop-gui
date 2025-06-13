@@ -1,11 +1,9 @@
 using System;
-
+using ApplicationNameUpperCamelCase.ViewModels;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 
-using SiteMonitor.ViewModels;
-
-namespace SiteMonitor;
+namespace ApplicationNameUpperCamelCase;
 
 /// <summary>
 ///   Pre-generated for us.

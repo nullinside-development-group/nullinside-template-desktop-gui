@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
-
+using ApplicationNameUpperCamelCase.Views;
 using Avalonia.Controls;
 using Avalonia.Threading;
 
@@ -9,14 +9,17 @@ using Nullinside.Api.Common.Desktop;
 
 using ReactiveUI;
 
-using SiteMonitor.Views;
-
-namespace SiteMonitor.ViewModels;
+namespace ApplicationNameUpperCamelCase.ViewModels;
 
 /// <summary>
 ///   The view model for the <seealso cref="NewVersionWindow" /> class.
 /// </summary>
 public class NewVersionWindowViewModel : ViewModelBase {
+  /// <summary>
+  ///   True if updating the application currently, false otherwise.
+  /// </summary>
+  private bool _isUpdating;
+
   /// <summary>
   ///   The local version of the software.
   /// </summary>
@@ -36,12 +39,12 @@ public class NewVersionWindowViewModel : ViewModelBase {
   ///   Initializes a new instance of the <see cref="NewVersionWindowViewModel" /> class.
   /// </summary>
   public NewVersionWindowViewModel() {
-    OpenBrowser = ReactiveCommand.Create(LaunchBrowser);
+    UpdateSoftware = ReactiveCommand.Create(StartUpdateSoftware);
     CloseWindow = ReactiveCommand.Create<Window>(CloseWindowCommand);
 
     Task.Factory.StartNew(async () => {
       GithubLatestReleaseJson? version =
-        await GitHubUpdateManager.GetLatestVersion("nullinside-development-group", "nullinside-site-monitor");
+        await GitHubUpdateManager.GetLatestVersion("nullinside-development-group", "ApplicationNameUpperCamelCase");
 
       if (null == version) {
         return;
@@ -69,9 +72,17 @@ public class NewVersionWindowViewModel : ViewModelBase {
   }
 
   /// <summary>
-  ///   A command to open the browser window at the current update's location.
+  ///   True if updating the application currently, false otherwise.
   /// </summary>
-  public ICommand OpenBrowser { get; }
+  public bool IsUpdating {
+    get => _isUpdating;
+    set => this.RaiseAndSetIfChanged(ref _isUpdating, value);
+  }
+
+  /// <summary>
+  ///   A command to update the software.
+  /// </summary>
+  public ICommand UpdateSoftware { get; }
 
   /// <summary>
   ///   A command to close the current window.
@@ -89,11 +100,16 @@ public class NewVersionWindowViewModel : ViewModelBase {
   /// <summary>
   ///   Launches the web browser at the new release page.
   /// </summary>
-  private void LaunchBrowser() {
-    if (string.IsNullOrWhiteSpace(_newVersionUrl)) {
-      return;
-    }
+  private void StartUpdateSoftware() {
+    IsUpdating = true;
+    GitHubUpdateManager.PrepareUpdate()
+      .ContinueWith(_ => {
+        if (string.IsNullOrWhiteSpace(_newVersionUrl)) {
+          return;
+        }
 
-    Process.Start("explorer", _newVersionUrl);
+        Process.Start("explorer", _newVersionUrl);
+        GitHubUpdateManager.ExitApplicationToUpdate();
+      }).ConfigureAwait(false);
   }
 }
