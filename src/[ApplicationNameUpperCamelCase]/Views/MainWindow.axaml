@@ -2,18 +2,24 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:viewModels="clr-namespace:SiteMonitor.ViewModels"
+        xmlns:viewModels="clr-namespace:ApplicationNameUpperCamelCase.ViewModels"
+        xmlns:views="clr-namespace:ApplicationNameUpperCamelCase.Views"
         mc:Ignorable="d"
         d:DesignWidth="475"
         d:DesignHeight="300"
+        MinWidth="475"
+        MinHeight="300"
         Width="475"
         Height="300"
-        CanResize="False"
+        CanResize="True"
         WindowStartupLocation="CenterScreen"
-        x:Class="SiteMonitor.Views.MainWindow"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        x:Class="ApplicationNameUpperCamelCase.Views.MainWindow"
         x:DataType="viewModels:MainWindowViewModel"
         Icon="/Assets/logo.ico"
-        Title="Site Monitor">
+        Title="ApplicationNameUpperCamelCase">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
@@ -21,7 +27,27 @@
         <viewModels:MainWindowViewModel />
     </Design.DataContext>
 
-    <Grid Margin="20">
-        <Label>Hello World</Label>
-    </Grid>
+    <DockPanel HorizontalAlignment="Stretch"
+               VerticalAlignment="Stretch"
+               Name="ContentWrapper">
+        <views:WindowsTitleBar IsSeamless="True" />
+        <!-- The Application is Currently Updating and Not Usable!: This must come first because the final item always fills. -->
+        <DockPanel Background="Transparent" DockPanel.Dock="Top" IsVisible="{Binding IsUpdating}">
+            <StackPanel>
+                <Label HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       FontSize="32"
+                       FontWeight="Bold"
+                       Foreground="rgb(204, 200, 175)"
+                       Padding="0 50 0 0">
+                    Updating
+                </Label>
+                <views:Loading Width="100" Height="100" />
+            </StackPanel>
+        </DockPanel>
+        <!-- The normal application: This must come last because the last item always fills. -->
+        <DockPanel Background="Transparent" DockPanel.Dock="Top" IsVisible="{Binding !IsUpdating}">
+            <Label>Hello World</Label>
+        </DockPanel>
+    </DockPanel>
 </Window>

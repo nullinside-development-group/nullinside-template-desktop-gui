@@ -1,6 +1,6 @@
 ﻿using ReactiveUI;
 
-namespace SiteMonitor.ViewModels;
+namespace ApplicationNameUpperCamelCase.ViewModels;
 
 /// <summary>
 ///   A base class for all view models.
