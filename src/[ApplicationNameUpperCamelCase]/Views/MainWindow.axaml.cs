@@ -28,6 +28,13 @@ public partial class MainWindow : Window {
     this.AttachDevTools();
 #endif
   }
+  
+  #if !DEBUG
+  /// <summary>
+  ///   The service provider for DI.
+  /// </summary>
+  public IServiceProvider? ServiceProvider { get; set; }
+  #endif
 
   /// <summary>
   ///   Checks for a new version number of the application.
