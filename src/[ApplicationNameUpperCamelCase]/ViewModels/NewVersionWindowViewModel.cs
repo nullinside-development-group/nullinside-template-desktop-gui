@@ -44,7 +44,7 @@ public class NewVersionWindowViewModel : ViewModelBase {
 
     Task.Factory.StartNew(async () => {
       GithubLatestReleaseJson? version =
-        await GitHubUpdateManager.GetLatestVersion("nullinside-development-group", "ApplicationNameUpperCamelCase");
+        await GitHubUpdateManager.GetLatestVersion("nullinside-development-group", "ApplicationNameUpperCamelCase").ConfigureAwait(false);
 
       if (null == version) {
         return;

@@ -109,7 +109,7 @@ public partial class WindowsTitleBar : UserControl {
 
     while (hostWindow == null) {
       hostWindow = VisualRoot as Window;
-      await Task.Delay(50);
+      await Task.Delay(50).ConfigureAwait(true);
     }
 
     hostWindow.GetObservable(Window.WindowStateProperty).Subscribe(s => {
