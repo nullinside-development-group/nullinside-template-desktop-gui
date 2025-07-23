@@ -54,7 +54,7 @@ public partial class MainWindow : Window {
 
     Task.Factory.StartNew(async () => {
       GithubLatestReleaseJson? serverVersion =
-        await GitHubUpdateManager.GetLatestVersion("nullinside-development-group", "ApplicationNameUpperCamelCase");
+        await GitHubUpdateManager.GetLatestVersion("nullinside-development-group", "ApplicationNameUpperCamelCase").ConfigureAwait(false);
       string? localVersion = Assembly.GetEntryAssembly()?.GetName().Version?.ToString();
       if (null == serverVersion || string.IsNullOrWhiteSpace(serverVersion.name) ||
           string.IsNullOrWhiteSpace(localVersion)) {
@@ -87,7 +87,7 @@ public partial class MainWindow : Window {
             DataContext = vm
           };
 
-          await versionWindow.ShowDialog(this);
+          await versionWindow.ShowDialog(this).ConfigureAwait(false);
         }
         catch {
           // do nothing, don't crash
