@@ -13,9 +13,6 @@
         Height="300"
         CanResize="True"
         WindowStartupLocation="CenterScreen"
-        ExtendClientAreaToDecorationsHint="True"
-        ExtendClientAreaChromeHints="NoChrome"
-        ExtendClientAreaTitleBarHeightHint="-1"
         x:Class="ApplicationNameUpperCamelCase.Views.MainWindow"
         x:DataType="viewModels:MainWindowViewModel"
         Icon="/Assets/logo.ico"
@@ -30,7 +27,6 @@
     <DockPanel HorizontalAlignment="Stretch"
                VerticalAlignment="Stretch"
                Name="ContentWrapper">
-        <views:WindowsTitleBar IsSeamless="True" />
         <!-- The Application is Currently Updating and Not Usable!: This must come first because the final item always fills. -->
         <DockPanel Background="Transparent" DockPanel.Dock="Top" IsVisible="{Binding IsUpdating}">
             <StackPanel>
