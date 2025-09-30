@@ -44,7 +44,7 @@ public partial class MainWindow : Window {
 
     var args = Environment.GetCommandLineArgs().ToList();
     if (args.Contains("--update")) {
-      _ = GitHubUpdateManager.PerformUpdateAndRestart("nullinside-development-group", "ApplicationNameUpperCamelCase", args[2], "windows-x64.zip");
+      _ = GitHubUpdateManager.PerformUpdateAndRestart("nullinside-development-group", "ApplicationNameUpperCamelCase", args[2].Trim('"').Trim(), "windows-x64.zip");
       return;
     }
 
